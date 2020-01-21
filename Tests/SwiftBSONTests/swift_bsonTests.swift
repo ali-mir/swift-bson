@@ -85,10 +85,58 @@ final class swift_bsonTests: XCTestCase {
         expect(d["x", default: ["y" : 4]]).to(equal(["y" : 4]))
     }
 
+    func testKeyValueRetrieval() {
+        var d = Document()
+        d["a"] = 1
+        d["b"] = "hello"
+        d["c"] = ["d" : 2]
+        expect(Set(d.keys)).to(equal(Set(["a", "b", "c"])))
+        expect(Set(d.values)).to(equal(Set([1, "hello", ["d" : 2]])))
+    }
+
+    func testRawBSON() throws {
+        var d = Document()
+        d["a"] = 10
+        let fromRawBSON = Document(fromBSON: d.rawBSON)
+        expect(d).to(equal(fromRawBSON))
+    }
+
+    func testEquatable() {
+        expect(["hi": ["a" : 2], "hello": "hi", "cat": 2] as Document)
+            .to(equal(["hi": ["a" : 2], "hello": "hi", "cat": 2] as Document))
+    }
+
+    func testValueBehavior() {
+        let doc1: Document = ["a": 1]
+        var doc2 = doc1
+        doc2["b"] = 2
+        expect(doc2["b"]).to(equal(2))
+        expect(doc1["b"]).to(beNil())
+        expect(doc1).toNot(equal(doc2))
+    }
+
+    func testMultibyteCharacterStrings() throws {
+        let str = String(repeating: "🇧🇩", count: 10)
+        var doc: Document = ["first": .string(str)]
+        expect(doc["first"]).to(equal(.string(str)))
+        let doc1: Document = [str: "second"]
+        expect(doc1[str]).to(equal("second"))
+    }
+
+    func testDynamicMemberLookup() {
+        let d = Document()
+        d.a = 1
+        expect(d.a).to(equal(1))
+    }
+
+
     static var allTests = [
         ("testInt32", testInt32),
         ("testInt64", testInt64),
         ("testString", testString),
-        ("testDocument", testDocument)
+        ("testDocument", testDocument),
+        ("testKeyValueRetrieval", testKeyValueRetrieval),
+        ("testRawBSON", testRawBSON),
+        ("testEquatable", testEquatable)
     ]
 }

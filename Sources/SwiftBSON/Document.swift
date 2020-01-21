@@ -1,4 +1,5 @@
 import NIO
+import Foundation
 
 public struct Document {
     internal var data: ByteBuffer
@@ -26,11 +27,26 @@ extension Document {
         self = d
     }
 
+    // public init(fromJSON json: String) throws {
+    //     // `String`s are Unicode under the hood so force unwrap always succeeds.
+    //     // see https://www.objc.io/blog/2018/02/13/string-to-data-and-back/
+    //     try self.init(fromJSON: json.data(using: .utf8)!) // swiftlint:disable:this force_unwrapping
+    // }
+
+    public init(fromBSON data: Data) {
+        self.data = ByteBufferAllocator().buffer(capacity: data.count)
+        self.data.writeBytes([UInt8](data))
+        self.keySet = Set<String>()
+        self.forEach({ self.keySet.insert($0.0) })
+
+    }
+
     internal init(fromBSON data: ByteBuffer) {
         self.data = data
         self.keySet = Set<String>()
         self.forEach({ self.keySet.insert($0.0) })
     }
+
 
     public func filter(_ isIncluded: (KeyValuePair) throws -> Bool) rethrows -> Document {
         var output = Document()
@@ -87,6 +103,10 @@ extension Document {
 
     public var count: Int {
         return keys.count
+    }
+
+    public var rawBSON: Data { 
+        return Data(self.data.getBytes(at: 0, length: self.data.writerIndex)!)
     }
 
     public func printBytes() {

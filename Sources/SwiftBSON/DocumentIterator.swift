@@ -3,10 +3,44 @@ import NIO
 
 extension Document: Sequence {
     public typealias Iterator = DocumentIterator
+    public typealias SubSequence = Document
+
 
     public func makeIterator() -> DocumentIterator {
         return DocumentIterator(over: self)
     }
+
+    public var isEmpty: Bool { return self.keySet.isEmpty }
+
+    public var values: [BSON] {
+        var values = [BSON]()
+        self.forEach({ values.append($0.1) })
+        return values
+
+    }
+
+    public func dropFirst(_ n: Int) -> Document {
+        switch n {
+        case ..<0:
+            fatalError("Can't drop a negative number of elements from a document")
+        case 0:
+            return self
+        default:
+            return self.dropFirst(n)
+        }
+    }
+
+    public func dropLast(_ n: Int) -> Document {
+        switch n {
+        case ..<0:
+            fatalError("Can't drop a negative number of elements from a `Document`")
+        case 0:
+            return self
+        default:
+            return self.dropLast(n)
+        }
+    }
+
 }
 
 public struct DocumentIterator: IteratorProtocol {
@@ -45,17 +79,13 @@ public struct DocumentIterator: IteratorProtocol {
         return (key, value.bson)
     }
 
+
     // internal var keys: [String] {
     //     var keys = [String]()
     //     while self.advance() { keys.append(self.currentKey) }
     //     return keys
     // }
 
-    // internal var values: [BSON] {
-    //     var values = [BSON]()
-    //     while self.advance() { values.append(self.currentValue) }
-    //     return values
-    // }
 }
 
 let typeMap: [BSONType: BSONValue.Type] = [
