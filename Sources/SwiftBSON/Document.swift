@@ -3,16 +3,15 @@ import Foundation
 
 public struct Document {
     internal var data: ByteBuffer
-    internal var keySet: Set<String>
+    public var keys: [String]
 }
 
 extension Document {
-    public typealias KeyValuePair = (key: String, value: BSON)
 
     public init() {
         self.data = ByteBufferAllocator().buffer(capacity: 4)
         self.data.writeInteger(Int32(4))
-        self.keySet = Set<String>()
+        self.keys = [String]()
     }
 
     internal init(keyValuePairs: [(String, BSON)]) {
@@ -36,15 +35,15 @@ extension Document {
     public init(fromBSON data: Data) {
         self.data = ByteBufferAllocator().buffer(capacity: data.count)
         self.data.writeBytes([UInt8](data))
-        self.keySet = Set<String>()
-        self.forEach({ self.keySet.insert($0.0) })
+        self.keys = [String]()
+        self.forEach({ self.keys.append($0.0) })
 
     }
 
     internal init(fromBSON data: ByteBuffer) {
         self.data = data
-        self.keySet = Set<String>()
-        self.forEach({ self.keySet.insert($0.0) })
+        self.keys = [String]()
+        self.forEach({ self.keys.append($0.0) })
     }
 
 
@@ -58,7 +57,7 @@ extension Document {
 
     public subscript(key: String) -> BSON? {
         get {
-            if (!keySet.contains(key)) {
+            if (!keys.contains(key)) {
                 return nil
             }
             return first { k, _ in k == key }.map { _, v in v }
@@ -66,16 +65,16 @@ extension Document {
         set(newValue) {
             guard let value = newValue else {
                 self = self.filter { $0.key != key}
-                keySet.remove(key)
+                self.keys.removeObject(element: key)
                 return
             }
-            if keySet.contains(key) {
+            if self.keys.contains(key) {
                 self = self.filter { $0.key != key}
             }
             value.bsonValue.encode(key: key, data: &self.data)
             self.data.writeBytes([0])
             self.data.moveWriterIndex(to: self.data.writerIndex - 1)
-            keySet.insert(key)
+            self.keys.append(key)
         }
     }
 
@@ -94,11 +93,7 @@ extension Document {
     }
 
     public func hasKey(_ key: String) -> Bool {
-        return keySet.contains(key)
-    }
-
-    public var keys: [String] {
-        return self.keySet.map { $0 }
+        return self.keys.contains(key)
     }
 
     public var count: Int {
@@ -123,7 +118,7 @@ extension Document: ExpressibleByDictionaryLiteral {
 extension Document: Hashable {
     public func hash(into hasher: inout Hasher) {
         hasher.combine(self.data)
-        hasher.combine(self.keySet)
+        hasher.combine(self.keys)
     }
 }
 
@@ -209,5 +204,13 @@ extension UInt8 {
 extension Array where Element == UInt8 {
     var hex: String {
         return reduce("") { $0 + String(format: "%02x ", $1) }
+    }
+}
+
+extension Array where Element == String {
+    public mutating func removeObject(element: String) {
+        if let index = firstIndex(of: element) {
+            self.remove(at: index)
+        }
     }
 }

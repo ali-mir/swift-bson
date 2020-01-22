@@ -123,11 +123,11 @@ final class swift_bsonTests: XCTestCase {
         expect(doc1[str]).to(equal("second"))
     }
 
-    func testDynamicMemberLookup() {
-        let d = Document()
-        d.a = 1
-        expect(d.a).to(equal(1))
-    }
+    // func testDynamicMemberLookup() {
+    //     let d = Document()
+    //     d.a = 1
+    //     expect(d.a).to(equal(1))
+    // }
 
 
     static var allTests = [
