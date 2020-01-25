@@ -118,7 +118,6 @@ extension Document: ExpressibleByDictionaryLiteral {
 extension Document: Hashable {
     public func hash(into hasher: inout Hasher) {
         hasher.combine(self.data)
-        hasher.combine(self.keys)
     }
 }
 

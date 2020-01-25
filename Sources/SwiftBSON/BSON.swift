@@ -114,8 +114,6 @@ extension BSON {
             return v
         case let .int32(v):
             return v
-        // case let .double(v):
-        //     return v
         case let .document(v):
             return v
         case let .int64(v):
