@@ -1,3 +1,3 @@
-# swift-bson
+###  swift-bson
 
-A description of this package.
+An early proof-of-concept library to enable encoding/decoding BSON documents.

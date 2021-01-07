@@ -15,7 +15,7 @@ extension Document {
     }
 
     internal init(keyValuePairs: [(String, BSON)]) {
-        // make sure all keys are unique
+        // We must ensure all keys in a document are unique.
         guard Set(keyValuePairs.map { $0.0 }).count == keyValuePairs.count else {
             fatalError("Dictionary literal \(keyValuePairs) contains duplicate keys")
         }
@@ -25,12 +25,6 @@ extension Document {
         }
         self = d
     }
-
-    // public init(fromJSON json: String) throws {
-    //     // `String`s are Unicode under the hood so force unwrap always succeeds.
-    //     // see https://www.objc.io/blog/2018/02/13/string-to-data-and-back/
-    //     try self.init(fromJSON: json.data(using: .utf8)!) // swiftlint:disable:this force_unwrapping
-    // }
 
     public init(fromBSON data: Data) {
         self.data = ByteBufferAllocator().buffer(capacity: data.count)
@@ -45,7 +39,6 @@ extension Document {
         self.keys = [String]()
         self.forEach({ self.keys.append($0.0) })
     }
-
 
     public func filter(_ isIncluded: (KeyValuePair) throws -> Bool) rethrows -> Document {
         var output = Document()

@@ -123,8 +123,6 @@ final class swift_bsonTests: XCTestCase {
         expect(doc1[str]).to(equal("second"))
     }
 
-
-
     static var allTests = [
         ("testInt32", testInt32),
         ("testInt64", testInt64),

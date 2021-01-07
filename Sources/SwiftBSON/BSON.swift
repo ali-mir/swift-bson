@@ -1,9 +1,6 @@
 import NIO
 
 public enum BSON {
-    // /// A BSON double.
-    // case double(Double)
-
     /// A BSON string.
     /// - SeeAlso: https://docs.mongodb.com/manual/reference/bson-types/#string
     case string(String)
@@ -11,63 +8,11 @@ public enum BSON {
     /// A BSON document.
     case document(Document)
 
-    // /// A BSON array.
-    // indirect case array([BSON])
-
-    // /// A BSON binary.
-    // case binary(Binary)
-
-    // /// A BSON undefined.
-    // case undefined
-
-    // /// A BSON ObjectId.
-    // /// - SeeAlso: https://docs.mongodb.com/manual/reference/bson-types/#objectid
-    // case objectId(ObjectId)
-
-    // /// A BSON boolean.
-    // case bool(Bool)
-
-    // /// A BSON UTC datetime.
-    // /// - SeeAlso: https://docs.mongodb.com/manual/reference/bson-types/#date
-    // case datetime(Date)
-
-    // /// A BSON null.
-    // case null
-
-    // /// A BSON regular expression.
-    // case regex(RegularExpression)
-
-    // /// A BSON dbPointer.
-    // case dbPointer(DBPointer)
-
-    // /// A BSON symbol.
-    // case symbol(Symbol)
-
-    // /// A BSON JavaScript code.
-    // case code(Code)
-
-    // /// A BSON JavaScript code with scope.
-    // case codeWithScope(CodeWithScope)
-
     /// A BSON int32.
     case int32(Int32)
 
-    // /// A BSON timestamp.
-    // /// - SeeAlso: https://docs.mongodb.com/manual/reference/bson-types/#timestamps
-    // case timestamp(Timestamp)
-
     /// A BSON int64.
     case int64(Int64)
-
-    // /// A BSON Decimal128.
-    // /// - SeeAlso: https://github.com/mongodb/specifications/blob/master/source/bson-decimal128/decimal128.rst
-    // case decimal128(Decimal128)
-
-    // /// A BSON minKey.
-    // case minKey
-
-    // /// A BSON maxKey.
-    // case maxKey
 
     public var stringValue: String? {
         guard case let .string(value) = self else {
@@ -135,7 +80,6 @@ extension BSON {
         }
     }
 }
-
 
 extension BSON: ExpressibleByStringLiteral {
     public init(stringLiteral value: String) {

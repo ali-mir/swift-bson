@@ -3,8 +3,6 @@ extension Document: Sequence {
     public typealias SubSequence = Document
     public typealias KeyValuePair = (key: String, value: BSON)
 
-
-
     public func makeIterator() -> DocumentIterator {
         return DocumentIterator(over: self)
     }
